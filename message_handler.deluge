@@ -1,0 +1,12 @@
+response = Map();
+userMessage = message.get("text").toLowerCase().trim();
+if(userMessage.contains("help") || userMessage == "hi" || userMessage == "hello")
+{
+	helpText = "**Task Manager Commands:**\n\n" + "`/addtask [task name]` - Add a new task\n" + "`/listtasks` - View all your tasks\n" + "`/completetask [task id]` - Mark task as complete\n" + "`/deletetask [task id]` - Delete a task\n\n" + "Example: `/addtask Review project documentation`";
+	response.put("text",helpText);
+}
+else
+{
+	response.put("text","I didn't understand that. Type 'help' to see available commands.");
+}
+return response;
