@@ -1,0 +1,27 @@
+response = Map();
+taskTitle = arguments;
+if(taskTitle == "" || taskTitle == null)
+{
+	response.put("text","❌ Please provide a task name. Example: `/addtask Buy groceries`");
+	return response;
+}
+// Get user info
+userName = user.get("first_name") + " " + user.get("last_name");
+// Create unique task ID
+taskId = zoho.currenttime.toString("yyyyMMddHHmmss");
+// Insert into database
+rowData = Map();
+rowData.put("taskstatus","Pending");
+rowData.put("taskid",taskId);
+rowData.put("tasktitle",taskTitle);
+rowData.put("taskcreatedby",userName);
+rowData.put("taskcreatedon",taskId.toLong());
+// Store as number (timestamp)
+rowData.put("taskdescription","");
+insertRow = zoho.cliq.createRecord("taskdatabase",rowData);
+// Debug: Check if insert was successful
+info insertRow;
+// Send success message
+successMsg = "✅ **Task Added Successfully!**\n\n" + "**Task ID:** " + taskId + "\n" + "**Title:** " + taskTitle + "\n" + "**Status:** Pending\n\n" + "Use `/listtasks` to view all tasks";
+response.put("text",successMsg);
+return response;
