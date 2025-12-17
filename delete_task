@@ -1,0 +1,34 @@
+response = Map();
+// Fetch records
+all_records = zoho.cliq.getRecords("taskdatabase");
+info all_records;
+// Get the list from the response
+recordsList = all_records.get("list");
+if(recordsList.isEmpty())
+{
+	response.put("text","📋 No tasks found! Database is empty. Use `/addtask [task name]` to create one.");
+	return response;
+}
+// Build task list
+taskList = "📋 **All Tasks:**\n\n";
+pendingCount = 0;
+completedCount = 0;
+for each  task in recordsList
+{
+	status = task.get("taskstatus");
+	taskId = task.get("taskid");
+	title = task.get("tasktitle");
+	createdBy = task.get("taskcreatedby");
+	taskList = taskList + "• **[" + taskId + "]** " + title + " (by " + createdBy + ") - " + status + "\n";
+	if(status == "Pending")
+	{
+		pendingCount = pendingCount + 1;
+	}
+	else
+	{
+		completedCount = completedCount + 1;
+	}
+}
+taskList = taskList + "\n**Summary:** " + pendingCount + " pending, " + completedCount + " completed";
+response.put("text",taskList);
+return response;
