@@ -1,0 +1,37 @@
+response = Map();
+taskId = arguments;
+// Strip asterisks and any whitespace - escape the * character
+taskId = taskId.replaceAll("\\*","");
+taskId = taskId.trim();
+if(taskId == "" || taskId == null)
+{
+	response.put("text","❌ Please provide a task ID. Example: `/completetask 20241129210500`");
+	return response;
+}
+// Get all records
+all_records = zoho.cliq.getRecords("taskdatabase");
+recordsList = all_records.get("list");
+// Find the matching task
+taskFound = false;
+rowId = "";
+for each  task in recordsList
+{
+	currentTaskId = task.get("taskid").toString();
+	if(currentTaskId == taskId)
+	{
+		taskFound = true;
+		rowId = task.get("id");
+		break;
+	}
+}
+if(!taskFound)
+{
+	response.put("text","❌ Task ID not found. Use `/listtasks` to see your tasks.");
+	return response;
+}
+// Update status
+updateData = Map();
+updateData.put("taskstatus","Completed");
+zoho.cliq.updateRecord("taskdatabase",rowId,updateData);
+response.put("text","✅ Task **" + taskId + "** marked as completed!");
+return response;
