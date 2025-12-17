@@ -1,0 +1,44 @@
+response = Map();
+taskId = arguments;
+// Strip asterisks and whitespace
+taskId = taskId.replaceAll("\\*","");
+taskId = taskId.trim();
+if(taskId == "" || taskId == null)
+{
+	response.put("text","❌ Please provide a task ID. Example: `/viewtask 20241129210500`");
+	return response;
+}
+// Get all records
+all_records = zoho.cliq.getRecords("taskdatabase");
+recordsList = all_records.get("list");
+// Find the matching task
+taskFound = false;
+taskDetails = Map();
+for each  task in recordsList
+{
+	currentTaskId = task.get("taskid").toString();
+	if(currentTaskId == taskId)
+	{
+		taskFound = true;
+		taskDetails = task;
+		break;
+	}
+}
+if(!taskFound)
+{
+	response.put("text","❌ Task ID not found. Use `/listtasks` to see your tasks.");
+	return response;
+}
+// Build detailed view
+status = taskDetails.get("taskstatus");
+title = taskDetails.get("tasktitle");
+createdBy = taskDetails.get("taskcreatedby");
+createdOn = taskDetails.get("taskcreatedon");
+description = taskDetails.get("taskdescription");
+if(description == "" || description == null)
+{
+	description = "_No description_";
+}
+detailMsg = "📋 **Task Details**\n\n" + "**Task ID:** " + taskId + "\n" + "**Title:** " + title + "\n" + "**Status:** " + status + "\n" + "**Created By:** " + createdBy + "\n" + "**Created On:** " + createdOn + "\n" + "**Description:** " + description;
+response.put("text",detailMsg);
+return response;
